@@ -16,7 +16,6 @@ load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
-TIMEOUT = int(os.getenv('EXTERNAL_REQUEST_TIMEOUT', 30))
 
 
 @contextmanager
@@ -109,7 +108,7 @@ def url_check(id):
         if not url:
             abort(404)
         try:
-            request = requests.get(url.name, timeout=TIMEOUT)
+            request = requests.get(url.name)
             request.raise_for_status()
         except requests.RequestException:
             flash('Произошла ошибка при проверке', 'error')
