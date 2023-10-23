@@ -19,6 +19,7 @@ poetry = "^1.6.1"
 beautifulsoup4 = "^4.12.2"
 requests = "^2.31.0"
 psycopg2-binary = "^2.9.9"
+validators = "^0.22.0"
 
 [build-system]
 requires = ["poetry-core"]
