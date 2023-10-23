@@ -1,6 +1,5 @@
 .env
 .venv/
 __pycache__/
-__init__.py
 page_analyzer/__pycache__/
 page_analyzer/templates/templates.rar
