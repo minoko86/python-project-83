@@ -1,6 +1,5 @@
 import logging
 import os
-from contextlib import contextmanager
 from urllib.parse import urlparse
 
 import psycopg2
@@ -17,22 +16,7 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
-
-@contextmanager
-def connect(bd_url):
-    try:
-        connection = psycopg2.connect(bd_url)
-        yield connection
-    except Exception:
-        if connection:
-            connection.rollback()
-        raise
-    else:
-        if connection:
-            connection.commit()
-    finally:
-        if connection:
-            connection.close()
+conn = psycopg2.connect(DATABASE_URL)
 
 
 @app.errorhandler(404)
@@ -53,7 +37,7 @@ def index():
 
 @app.get('/urls')
 def urls_list():
-    with connect(DATABASE_URL) as conn:
+    with conn:
         urls = db.get_all_urls(conn)
         url_checks = {
             item.url_id: item for item in db.get_last_url_checks(conn)
@@ -77,7 +61,7 @@ def url_add():
         ), 422
     url_parsed = urlparse(url_name)
     url_name = f'{url_parsed.scheme}://{url_parsed.netloc}'
-    with connect(DATABASE_URL) as conn:
+    with conn:
         url_to_check = db.get_url_by_name(conn, url_name)
         if url_to_check:
             flash('Страница уже существует', 'info')
@@ -89,7 +73,7 @@ def url_add():
 
 @app.get('/urls/<id>')
 def url_info(id):
-    with connect(DATABASE_URL) as conn:
+    with conn:
         url = db.get_url_by_id(conn, id)
         if not url:
             abort(404)
@@ -103,7 +87,7 @@ def url_info(id):
 
 @app.post('/urls/<id>/checks')
 def url_check(id):
-    with connect(DATABASE_URL) as conn:
+    with conn:
         url = db.get_url_by_id(conn, id)
         if not url:
             abort(404)
