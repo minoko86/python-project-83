@@ -33,5 +33,30 @@ Page Analyzer is a web application that analyzes URLs and provides information a
 
 Contributions to the Page Analyzer project are always welcome! If you encounter any issues or have suggestions for enhancements, please submit an issue or pull request. 
 
+### Installation
+**Setting up enviroment**
+```bash
+git clone https://github.com/minoko86/python-project-83/
+cd page_analyzer
+make build
+```
+
+Configure .env in the root folder
+```
+cp .env_example .env
+```
+
+**Dev**
+```bash
+make dev
+```
+
+**Prod**
+```bash
+make start
+```
+
+*Additional functions are available in Makefile*
+
 ### View site here:
 [Analyzer](https://speed-page-analyzer.onrender.com/)
