@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 
 
-def get_seo_data(text):
-    soup = BeautifulSoup(text, 'html.parser')
+def get_seo_data(response):
+    soup = BeautifulSoup(response.text, 'html.parser')
     title = soup.title.get_text()
     h1 = soup.h1.text if soup.h1 else ''
     description_tag = soup.find('meta', attrs={'name': 'description'})

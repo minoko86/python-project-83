@@ -93,7 +93,7 @@ def url_check(id):
         flash('Произошла ошибка при проверке', 'error')
         return redirect(url_for('url_info', id=id))
     status_code = response.status_code
-    h1, title, description = html.get_seo_data(response.text)
+    h1, title, description = html.get_seo_data(response)
     db.create_check(id, status_code, h1, title, description)
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('url_info', id=id))
