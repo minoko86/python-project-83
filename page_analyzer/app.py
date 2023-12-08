@@ -3,13 +3,13 @@ import os
 from urllib.parse import urlparse
 
 import psycopg2
-import requests
 from dotenv import load_dotenv
 from flask import (Flask, abort, flash, redirect, render_template, request,
                    url_for)
 
 from page_analyzer import db, html
 from page_analyzer.validator import validate
+from page_analyzer.url import get_response
 
 load_dotenv()
 DATABASE_URL = os.getenv('DATABASE_URL')
@@ -89,16 +89,14 @@ def url_info(id):
 def url_check(id):
     with conn:
         url = db.get_url_by_id(conn, id)
+        response = get_response(url)
         if not url:
             abort(404)
-        try:
-            request = requests.get(url.name)
-            request.raise_for_status()
-        except requests.RequestException:
+        if not response:
             flash('Произошла ошибка при проверке', 'error')
             return redirect(url_for('url_info', id=id))
-        status_code = request.status_code
-        h1, title, description = html.get_seo_data(request.text)
+        status_code = response.status_code
+        h1, title, description = html.get_seo_data(response.text)
         db.create_check(conn, id, status_code, h1, title, description)
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('url_info', id=id))
