@@ -2,7 +2,7 @@ import logging
 import os
 from urllib.parse import urlparse
 
-import psycopg2
+# import psycopg2
 from dotenv import load_dotenv
 from flask import (Flask, abort, flash, redirect, render_template, request,
                    url_for)
@@ -12,11 +12,11 @@ from page_analyzer.validator import validate
 from page_analyzer.url import get_response
 
 load_dotenv()
-DATABASE_URL = os.getenv('DATABASE_URL')
+# DATABASE_URL = os.getenv('DATABASE_URL')
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
-conn = psycopg2.connect(DATABASE_URL)
+# conn = psycopg2.connect(DATABASE_URL)
 
 
 @app.errorhandler(404)
@@ -37,11 +37,11 @@ def index():
 
 @app.get('/urls')
 def urls_list():
-    with conn:
-        urls = db.get_all_urls(conn)
-        url_checks = {
-            item.url_id: item for item in db.get_last_url_checks(conn)
-        }
+    # with conn:
+    urls = db.get_all_urls()
+    url_checks = {
+        item.url_id: item for item in db.get_last_url_checks()
+    }
     return render_template(
         '/urls.html',
         urls=urls,
@@ -61,23 +61,23 @@ def url_add():
         ), 422
     url_parsed = urlparse(url_name)
     url_name = f'{url_parsed.scheme}://{url_parsed.netloc}'
-    with conn:
-        url_to_check = db.get_url_by_name(conn, url_name)
-        if url_to_check:
-            flash('Страница уже существует', 'info')
-            return redirect(url_for('url_info', id=url_to_check[0]))
-        url_id = db.create_url(conn, url_name)
+    # with conn:
+    url_to_check = db.get_url_by_name(url_name)
+    if url_to_check:
+        flash('Страница уже существует', 'info')
+        return redirect(url_for('url_info', id=url_to_check[0]))
+    url_id = db.create_url(url_name)
     flash('Страница успешно добавлена', 'success')
     return redirect(url_for('url_info', id=url_id))
 
 
 @app.get('/urls/<id>')
 def url_info(id):
-    with conn:
-        url = db.get_url_by_id(conn, id)
-        if not url:
-            abort(404)
-        url_checks = db.get_checks_by_url_id(conn, id)
+    # with conn:
+    url = db.get_url_by_id(id)
+    if not url:
+        abort(404)
+    url_checks = db.get_checks_by_url_id(id)
     return render_template(
         'urls_id.html',
         url=url,
@@ -87,16 +87,16 @@ def url_info(id):
 
 @app.post('/urls/<id>/checks')
 def url_check(id):
-    with conn:
-        url = db.get_url_by_id(conn, id)
-        response = get_response(url)
-        if not url:
-            abort(404)
-        if not response:
-            flash('Произошла ошибка при проверке', 'error')
-            return redirect(url_for('url_info', id=id))
-        status_code = response.status_code
-        h1, title, description = html.get_seo_data(response.text)
-        db.create_check(conn, id, status_code, h1, title, description)
+    # with conn:
+    url = db.get_url_by_id(id)
+    response = get_response(url)
+    if not url:
+        abort(404)
+    if not response:
+        flash('Произошла ошибка при проверке', 'error')
+        return redirect(url_for('url_info', id=id))
+    status_code = response.status_code
+    h1, title, description = html.get_seo_data(response.text)
+    db.create_check(id, status_code, h1, title, description)
     flash('Страница успешно проверена', 'success')
     return redirect(url_for('url_info', id=id))
