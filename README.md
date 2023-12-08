@@ -3,7 +3,7 @@
 [![Python CI](https://github.com/minoko86/python-project-83/actions/workflows/pyci.yml/badge.svg)](https://github.com/minoko86/python-project-83/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/3e83d09f9a5f02262901/maintainability)](https://codeclimate.com/github/minoko86/python-project-83/maintainability)
 
-# Page Analyzer
+# Page Analyzer:)
 
 Page Analyzer is a web application that analyzes URLs and provides information about them through various request methods. It retrieves parameters such as title, description, status code, and more. The application also keeps a history of user requests in an SQL database and provides a separate page to view all URLs and their analysis history.
 
