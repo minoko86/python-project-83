@@ -25,7 +25,6 @@ class DB:
                             """, (id,))
                 return cursor.fetchone()
 
-
     def get_checks_by_url_id(self, id):
         with conn:
             with conn.cursor(cursor_factory=extras.NamedTupleCursor) as cursor:
@@ -45,7 +44,6 @@ class DB:
                             """, (id,))
                 return cursor.fetchall()
 
-
     def get_url_by_name(self, name):
         with conn:
             with conn.cursor(cursor_factory=extras.NamedTupleCursor) as cursor:
@@ -61,7 +59,6 @@ class DB:
                             """, (name,))
                 return cursor.fetchone()
 
-
     def get_all_urls(self):
         with conn:
             with conn.cursor(cursor_factory=extras.NamedTupleCursor) as cursor:
@@ -76,7 +73,6 @@ class DB:
                               id DESC;
                             """)
                 return cursor.fetchall()
-
 
     def get_last_url_checks(self):
         with conn:
@@ -98,7 +94,6 @@ class DB:
                             """)
                 return cursor.fetchall()
 
-
     def create_url(self, name):
         creation_date = date.today()
         with conn:
@@ -109,7 +104,6 @@ class DB:
                               (%s, %s) RETURNING id;
                             """, (name, creation_date))
                 return cursor.fetchone()[0]
-
 
     def create_check(self, id, code, h1, title, description):
         with conn:
@@ -122,8 +116,8 @@ class DB:
                             )
                             VALUES
                               (%s, %s, %s, %s, %s, %s);
-                            """, (id, code, h1, title, description, creation_date))
-
+                            """, (id, code, h1, title, description,
+                                  creation_date))
 
     def get_check_by_url_id(self, id):
         with conn:

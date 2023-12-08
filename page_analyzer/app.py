@@ -2,21 +2,22 @@ import logging
 import os
 from urllib.parse import urlparse
 
-# import psycopg2
+
 from dotenv import load_dotenv
 from flask import (Flask, abort, flash, redirect, render_template, request,
                    url_for)
 
-from page_analyzer import db, html
+from page_analyzer import html
 from page_analyzer.validator import validate
 from page_analyzer.url import get_response
+from page_analyzer.db import DB
 
 load_dotenv()
-# DATABASE_URL = os.getenv('DATABASE_URL')
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
 
-# conn = psycopg2.connect(DATABASE_URL)
+
+db = DB()
 
 
 @app.errorhandler(404)
@@ -37,7 +38,6 @@ def index():
 
 @app.get('/urls')
 def urls_list():
-    # with conn:
     urls = db.get_all_urls()
     url_checks = {
         item.url_id: item for item in db.get_last_url_checks()
@@ -61,7 +61,6 @@ def url_add():
         ), 422
     url_parsed = urlparse(url_name)
     url_name = f'{url_parsed.scheme}://{url_parsed.netloc}'
-    # with conn:
     url_to_check = db.get_url_by_name(url_name)
     if url_to_check:
         flash('Страница уже существует', 'info')
@@ -73,7 +72,6 @@ def url_add():
 
 @app.get('/urls/<id>')
 def url_info(id):
-    # with conn:
     url = db.get_url_by_id(id)
     if not url:
         abort(404)
@@ -87,7 +85,6 @@ def url_info(id):
 
 @app.post('/urls/<id>/checks')
 def url_check(id):
-    # with conn:
     url = db.get_url_by_id(id)
     response = get_response(url)
     if not url:
