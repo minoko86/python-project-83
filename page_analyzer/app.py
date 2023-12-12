@@ -9,7 +9,7 @@ from flask import (Flask, abort, flash, redirect, render_template, request,
 
 from page_analyzer import html
 from page_analyzer.validator import validate
-from page_analyzer.url import get_response
+from page_analyzer.html import get_response
 from page_analyzer.db import DB
 
 load_dotenv()
